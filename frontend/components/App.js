@@ -109,8 +109,26 @@ export default function App() {
   }
 
   const updateArticle = ({ article_id, article }) => {
-    // ✨ implement
-    // You got this!
+    setMessage('')
+    setSpinnerOn(true)
+    axios.put(`${articlesUrl}/${article_id}`, article, { headers: { Authorization: localStorage.getItem('token') } })
+      .then(res => {
+        setMessage(res.data.message)
+        setArticles(articles => {
+          return articles.map(art => {
+            return art.article_id === article_id ? res.data.article : art
+          })
+        })
+      })
+      .catch(err => {
+        setMessage(err?.response?.data?.message || 'Something did not work')
+        if (err.response.status == 401) {
+          redirectToLogin()
+        }
+      })
+      .finally(() => {
+        setSpinnerOn(false)
+      })
   }
 
   const deleteArticle = article_id => {
