@@ -5,6 +5,7 @@ import LoginForm from './LoginForm'
 import Message from './Message'
 import ArticleForm from './ArticleForm'
 import Spinner from './Spinner'
+import axios from 'axios';
 
 const articlesUrl = 'http://localhost:9000/api/articles'
 const loginUrl = 'http://localhost:9000/api/login'
@@ -19,7 +20,7 @@ export default function App() {
   // ✨ Research `useNavigate` in React Router v.6
   const navigate = useNavigate()
   const redirectToLogin = () => { /* ✨ implement */ }
-  const redirectToArticles = () => { /* ✨ implement */ }
+  const redirectToArticles = () => { navigate('/articles') }
 
   const logout = () => {
     // ✨ implement
@@ -48,6 +49,13 @@ export default function App() {
       window.localStorage.setItem('token', res.data.token);
       setMessage(res.data.message);
       redirectToArticles();
+    })
+    .catch(err => {
+      const resMessage = err?.response?.data?.message;
+      setMessage(resMessage || `Huston we have a problem Logging in: ${err.message}`)
+    })
+    .finally(() => {
+      setSpinnerOn(false);
     })
   }
 
@@ -91,7 +99,7 @@ export default function App() {
           <NavLink id="articlesScreen" to="/articles">Articles</NavLink>
         </nav>
         <Routes>
-          <Route path="/" element={<LoginForm />} />
+          <Route path="/" element={<LoginForm login={login} />} />
           <Route path="articles" element={
             <>
               <ArticleForm />
