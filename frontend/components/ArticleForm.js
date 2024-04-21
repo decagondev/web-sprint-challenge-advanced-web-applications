@@ -32,9 +32,18 @@ export default function ArticleForm(props) {
 
   const onSubmit = evt => {
     evt.preventDefault()
-    // ✨ implement
     // We must submit a new post or update an existing one,
     // depending on the truthyness of the `currentArticle` prop.
+    const article = {
+      title: values.title,
+      text: values.text,
+      topic: values.topic,
+    };
+    currentArticle
+      ? updateArticle({ article, article_id: currentArticle.article_id })
+      : postArticle(article);
+    setCurrentArticleId();
+    setValues(initialFormValues);
   }
 
   const isDisabled = () => {

@@ -18,7 +18,7 @@ export default function App() {
   const [spinnerOn, setSpinnerOn] = useState(false)
 
   const navigate = useNavigate()
-  const redirectToLogin = () => { navigate('/', replace) }
+  const redirectToLogin = () => { navigate('/', { replace: true }) }
   const redirectToArticles = () => { navigate('/articles') }
 
   const logout = () => {
