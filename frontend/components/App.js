@@ -36,6 +36,14 @@ export default function App() {
     // On success, we should set the token to local storage in a 'token' key,
     // put the server success message in its proper state, and redirect
     // to the Articles screen. Don't forget to turn off the spinner!
+    setSpinnerOn(true);
+    setMessage('');
+    axios.post(loginUrl, { username, password })
+    .then(res => {
+      window.localStorage.setItem('token', res.data.token);
+      setMessage(res.data.message);
+      redirectToArticles();
+    })
   }
 
   const getArticles = () => {
