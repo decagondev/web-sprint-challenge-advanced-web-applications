@@ -17,13 +17,11 @@ export default function App() {
   const [currentArticleId, setCurrentArticleId] = useState()
   const [spinnerOn, setSpinnerOn] = useState(false)
 
-  // ✨ Research `useNavigate` in React Router v.6
   const navigate = useNavigate()
-  const redirectToLogin = () => { /* ✨ implement */ }
+  const redirectToLogin = () => { navigate('/', replace) }
   const redirectToArticles = () => { navigate('/articles') }
 
   const logout = () => {
-    // ✨ implement
     // If a token is in local storage it should be removed,
     // and a message saying "Goodbye!" should be set in its proper state.
     // In any case, we should redirect the browser back to the login screen,
@@ -36,7 +34,6 @@ export default function App() {
   }
 
   const login = ({ username, password }) => {
-    // ✨ implement
     // We should flush the message state, turn on the spinner
     // and launch a request to the proper endpoint.
     // On success, we should set the token to local storage in a 'token' key,
@@ -68,6 +65,22 @@ export default function App() {
     // If something goes wrong, check the status of the response:
     // if it's a 401 the token might have gone bad, and we should redirect to login.
     // Don't forget to turn off the spinner!
+    setSpinnerOn(true);
+    setMessage('');
+    axios.get(articlesUrl, { headers: { Authorization: localStorage.getItem('token') } })
+      .then(res => {
+        setMessage(res.data.message);
+        setArticles(res.data.articles);
+      })
+      .catch(err => {
+        setMessage(err?.response?.data?.message || 'Something did not work')
+        if (err.response.status == 401) {
+          redirectToLogin();
+        }
+      })
+      .finally(() => {
+        setSpinnerOn(false);
+      })
   }
 
   const postArticle = article => {
