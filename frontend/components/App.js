@@ -88,6 +88,24 @@ export default function App() {
     // The flow is very similar to the `getArticles` function.
     // You'll know what to do! Use log statements or breakpoints
     // to inspect the response from the server.
+    setSpinnerOn(true)
+    setMessage('')
+    axios.post(articlesUrl, article, { headers: { Authorization: localStorage.getItem('token') } })
+      .then(res => {
+        setMessage(res.data.message);
+        setArticles(articles => {
+          return articles.concat(res.data.article);
+        })
+      })
+      .catch(err => {
+        setMessage(err?.response?.data?.message || 'Something did not work');
+        if (err.response.status == 401) {
+          redirectToLogin();
+        }
+      })
+      .finally(() => {
+        setSpinnerOn(false);
+      })
   }
 
   const updateArticle = ({ article_id, article }) => {
@@ -115,8 +133,21 @@ export default function App() {
           <Route path="/" element={<LoginForm login={login} />} />
           <Route path="articles" element={
             <>
-              <ArticleForm />
-              <Articles />
+              <>
+              <ArticleForm
+                currentArticle={articles.find(art => art.article_id == currentArticleId)}
+                setCurrentArticleId={setCurrentArticleId}
+                postArticle={postArticle}
+                updateArticle={updateArticle}
+              />
+              <Articles
+                articles={articles}
+                currentArticleId={currentArticleId}
+                setCurrentArticleId={setCurrentArticleId}
+                getArticles={getArticles}
+                deleteArticle={deleteArticle}
+              />
+            </>
             </>
           } />
         </Routes>
