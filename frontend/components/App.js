@@ -132,7 +132,26 @@ export default function App() {
   }
 
   const deleteArticle = article_id => {
-    // ✨ implement
+    setMessage('')
+    setSpinnerOn(true)
+    axios.delete(`${articlesUrl}/${article_id}`, { headers: { Authorization: localStorage.getItem('token') } })
+      .then(res => {
+        setMessage(res.data.message)
+        setArticles(articles => {
+          return articles.filter(art => {
+            return art.article_id != article_id
+          })
+        })
+      })
+      .catch(err => {
+        setMessage(err?.response?.data?.message || 'Something did not work')
+        if (err.response.status == 401) {
+          redirectToLogin()
+        }
+      })
+      .finally(() => {
+        setSpinnerOn(false)
+      })
   }
 
   return (
